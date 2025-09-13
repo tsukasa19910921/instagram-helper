@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Helper - 投稿効率化ツール</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 via-pink-50 to-white min-h-screen">
+    <!-- ヘッダー -->
+    <header class="container mx-auto px-4 py-8">
+        <nav class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold gradient-text">📸 Instagram Helper</h1>
+            <a href="https://github.com/tsukasa19910921/instagram-helper" 
+               target="_blank"
+               class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+                GitHub
+            </a>
+        </nav>
+    </header>
+
+    <!-- ヒーローセクション -->
+    <section class="container mx-auto px-4 py-12 text-center">
+        <h2 class="text-5xl font-bold mb-4">
+            <span class="gradient-text">Instagram投稿を自動化</span>
+        </h2>
+        <p class="text-xl text-gray-600 mb-8">
+            画像を自動でトリミングし、AIが魅力的な投稿文とハッシュタグを生成します
+        </p>
+        
+        <!-- デモ通知 -->
+        <div class="bg-amber-50 border-2 border-amber-200 rounded-lg p-4 max-w-2xl mx-auto mb-8">
+            <p class="text-amber-800 font-semibold">
+                ⚠️ これはデモページです
+            </p>
+            <p class="text-amber-700 text-sm mt-1">
+                実際の動作にはNode.jsサーバーの起動が必要です。以下のセットアップ手順をご確認ください。
+            </p>
+        </div>
+
+        <!-- CTAボタン -->
+        <div class="flex gap-4 justify-center flex-wrap">
+            <a href="#setup" class="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition text-lg font-semibold">
+                🚀 セットアップ方法
+            </a>
+            <a href="#features" class="bg-white text-purple-600 border-2 border-purple-600 px-8 py-3 rounded-lg hover:bg-purple-50 transition text-lg font-semibold">
+                ✨ 機能を見る
+            </a>
+        </div>
+    </section>
+
+    <!-- 機能セクション -->
+    <section id="features" class="container mx-auto px-4 py-16">
+        <h3 class="text-3xl font-bold text-center mb-12">主な機能</h3>
+        
+        <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <!-- 機能1 -->
+            <div class="feature-card bg-white rounded-xl p-6 shadow-lg">
+                <div class="text-4xl mb-4">📷</div>
+                <h4 class="text-xl font-bold mb-2">自動画像処理</h4>
+                <p class="text-gray-600">
+                    アップロードした画像を自動で1:1の正方形にトリミング。
+                    Instagram推奨の1080x1080pxに最適化します。
+                </p>
+            </div>
+
+            <!-- 機能2 -->
+            <div class="feature-card bg-white rounded-xl p-6 shadow-lg">
+                <div class="text-4xl mb-4">🤖</div>
+                <h4 class="text-xl font-bold mb-2">AI文章生成</h4>
+                <p class="text-gray-600">
+                    Gemini APIを使用して、画像に最適な投稿文を自動生成。
+                    「まじめ」「ユーモア」「キラキラ」の3つのスタイルから選択可能。
+                </p>
+            </div>
+
+            <!-- 機能3 -->
+            <div class="feature-card bg-white rounded-xl p-6 shadow-lg">
+                <div class="text-4xl mb-4">#️⃣</div>
+                <h4 class="text-xl font-bold mb-2">ハッシュタグ生成</h4>
+                <p class="text-gray-600">
+                    関連性の高いハッシュタグを自動生成。
+                    「多い」「普通」「少ない」から量を選択できます。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- スクリーンショット -->
+    <section class="container mx-auto px-4 py-16 bg-white rounded-3xl shadow-xl">
+        <h3 class="text-3xl font-bold text-center mb-12">アプリケーションの画面</h3>
+        
+        <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div>
+                <h4 class="font-semibold mb-3">📤 アップロード画面</h4>
+                <div class="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-8 h-64 flex items-center justify-center">
+                    <div class="text-center">
+                        <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                        </svg>
+                        <p class="text-gray-600">ドラッグ&ドロップ対応</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="font-semibold mb-3">✅ 処理完了画面</h4>
+                <div class="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-8 h-64 flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+                            <div class="bg-gray-200 h-20 w-20 mx-auto rounded mb-2"></div>
+                            <p class="text-xs text-gray-600">1080x1080</p>
+                        </div>
+                        <p class="text-sm text-gray-600">生成された文章とハッシュタグ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- セットアップ手順 -->
+    <section id="setup" class="container mx-auto px-4 py-16">
+        <h3 class="text-3xl font-bold text-center mb-12">セットアップ手順</h3>
+        
+        <div class="max-w-3xl mx-auto bg-gray-900 rounded-xl shadow-2xl overflow-hidden">
+            <div class="bg-gray-800 px-6 py-3 flex items-center">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                </div>
+                <span class="ml-4 text-gray-400 text-sm">Terminal</span>
+            </div>
+            
+            <pre class="text-green-400 p-6 overflow-x-auto"><code># 1. リポジトリをクローン
+git clone https://github.com/tsukasa19910921/instagram-helper.git
+cd instagram-helper
+
+# 2. 依存関係をインストール
+npm install
+
+# 3. 環境変数を設定
+cp .env.example .env
+<span class="text-yellow-400"># .envファイルを開いてGemini APIキーを設定</span>
+
+# 4. サーバーを起動
+npm start
+
+<span class="text-blue-400"># 5. ブラウザでアクセス
+# http://localhost:3000</span></code></pre>
+        </div>
+
+        <!-- API Key取得リンク -->
+        <div class="text-center mt-8">
+            <p class="text-gray-600 mb-4">Gemini APIキーが必要です</p>
+            <a href="https://makersuite.google.com/app/apikey" 
+               target="_blank"
+               class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                🔑 APIキーを取得する（無料）
+            </a>
+        </div>
+    </section>
+
+    <!-- 技術スタック -->
+    <section class="container mx-auto px-4 py-16">
+        <h3 class="text-3xl font-bold text-center mb-12">使用技術</h3>
+        
+        <div class="flex flex-wrap justify-center gap-4 max-w-2xl mx-auto">
+            <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full font-semibold">Node.js</span>
+            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-semibold">Express</span>
+            <span class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full font-semibold">Gemini API</span>
+            <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full font-semibold">Sharp</span>
+            <span class="bg-pink-100 text-pink-800 px-4 py-2 rounded-full font-semibold">Multer</span>
+            <span class="bg-indigo-100 text-indigo-800 px-4 py-2 rounded-full font-semibold">Tailwind CSS</span>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="container mx-auto px-4 py-8 text-center text-gray-600">
+        <div class="mb-4">
+            <a href="https://github.com/tsukasa19910921/instagram-helper" 
+               target="_blank"
+               class="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-semibold">
+                ⭐ Star on GitHub
+            </a>
+        </div>
+        <p>© 2025 Instagram Helper - MIT License</p>
+        <p class="text-sm mt-2">Created with ❤️ for the Instagram community</p>
+    </footer>
+</body>
+</html>
