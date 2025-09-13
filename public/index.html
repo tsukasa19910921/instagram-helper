@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Helper - 投稿効率化アプリ</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* カスタムスタイル */
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .instagram-gradient {
+            background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #764ba2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ドラッグ&ドロップエリアのスタイル */
+        .drop-zone {
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.dragover {
+            background-color: #f0f9ff;
+            border-color: #3b82f6;
+            transform: scale(1.02);
+        }
+
+        /* アニメーション */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- ヘッダー -->
+    <header class="gradient-bg text-white py-6 shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-center">
+                <i class="fab fa-instagram text-4xl mr-3"></i>
+                <h1 class="text-3xl font-bold">Instagram Helper</h1>
+            </div>
+            <p class="text-center mt-2 text-purple-100">投稿を効率化するAIアシスタント</p>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- アップロードセクション -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-upload text-purple-600 mr-2"></i>
+                画像をアップロード
+            </h2>
+
+            <!-- ドラッグ&ドロップエリア -->
+            <div id="dropZone" class="drop-zone border-3 border-dashed border-gray-300 rounded-lg p-12 text-center cursor-pointer hover:border-purple-500 transition-all">
+                <i class="fas fa-cloud-upload-alt text-6xl text-gray-400 mb-4"></i>
+                <p class="text-lg text-gray-600 mb-2">クリックして画像を選択</p>
+                <p class="text-sm text-gray-500">またはドラッグ&ドロップ</p>
+                <p class="text-xs text-gray-400 mt-2">対応形式: JPG, PNG, GIF (最大10MB)</p>
+                <input type="file" id="fileInput" class="hidden" accept="image/*">
+            </div>
+
+            <!-- プレビューエリア -->
+            <div id="previewArea" class="mt-6 hidden">
+                <h3 class="text-lg font-semibold mb-3">プレビュー</h3>
+                <div class="flex justify-center">
+                    <img id="imagePreview" class="max-w-full max-h-96 rounded-lg shadow-md" alt="プレビュー">
+                </div>
+            </div>
+        </div>
+
+        <!-- オプション設定セクション -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-cog text-purple-600 mr-2"></i>
+                投稿設定
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- 文章のテイスト -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-pen mr-1"></i>
+                        文章のテイスト
+                    </label>
+                    <select id="textStyle" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="serious">まじめ</option>
+                        <option value="humor" selected>ユーモア</option>
+                        <option value="sparkle">キラキラ</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">投稿文のスタイルを選択</p>
+                </div>
+
+                <!-- ハッシュタグの量 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-hashtag mr-1"></i>
+                        ハッシュタグの量
+                    </label>
+                    <select id="hashtagAmount" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="many">多い (15個以上)</option>
+                        <option value="normal" selected>普通 (8〜10個)</option>
+                        <option value="few">少ない (3〜5個)</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">ハッシュタグの数を調整</p>
+                </div>
+
+                <!-- 言語設定 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-language mr-1"></i>
+                        言語設定
+                    </label>
+                    <select id="language" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="japanese" selected>日本語</option>
+                        <option value="english">英語</option>
+                        <option value="bilingual">日英併記</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">投稿文の言語を選択</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 処理ボタン -->
+        <div class="text-center mb-6">
+            <button id="processButton" class="instagram-gradient text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class="fas fa-magic mr-2"></i>
+                画像を加工して文章を生成
+            </button>
+        </div>
+
+        <!-- ローディング表示 -->
+        <div id="loadingSection" class="hidden">
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <div class="flex flex-col items-center">
+                    <div class="loading-spinner mb-4"></div>
+                    <p class="text-lg text-gray-700">処理中です...</p>
+                    <p class="text-sm text-gray-500 mt-2">画像の解析と文章生成を行っています</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 結果表示セクション -->
+        <div id="resultSection" class="hidden fade-in">
+            <!-- 加工済み画像 -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-image text-purple-600 mr-2"></i>
+                    加工済み画像
+                </h2>
+                <div class="flex justify-center mb-4">
+                    <img id="processedImage" class="max-w-full rounded-lg shadow-md" alt="加工済み画像">
+                </div>
+                <div class="text-center">
+                    <button id="downloadImageButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                        <i class="fas fa-download mr-2"></i>
+                        画像をダウンロード
+                    </button>
+                </div>
+            </div>
+
+            <!-- 生成された文章 -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-comment-dots text-purple-600 mr-2"></i>
+                    投稿文章
+                </h2>
+                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                    <p id="generatedText" class="text-gray-800 whitespace-pre-wrap"></p>
+                </div>
+                <div class="text-center">
+                    <button id="copyTextButton" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                        <i class="fas fa-copy mr-2"></i>
+                        文章をコピー
+                    </button>
+                </div>
+            </div>
+
+            <!-- ハッシュタグ -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-hashtag text-purple-600 mr-2"></i>
+                    ハッシュタグ
+                </h2>
+                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                    <p id="hashtags" class="text-gray-800"></p>
+                </div>
+                <div class="text-center">
+                    <button id="copyHashtagsButton" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                        <i class="fas fa-copy mr-2"></i>
+                        ハッシュタグをコピー
+                    </button>
+                </div>
+            </div>
+
+            <!-- コピーボタンエリア -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="text-center">
+                    <button id="copyAllButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-lg">
+                        <i class="fas fa-clipboard-list mr-2"></i>
+                        すべてコピー（文章＋ハッシュタグ）
+                    </button>
+                </div>
+            </div>
+
+            <!-- 新しい画像ボタン -->
+            <div class="text-center mt-8">
+                <button id="newImageButton" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                    <i class="fas fa-redo mr-2"></i>
+                    新しい画像を処理
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm">
+                <i class="fas fa-robot mr-1"></i>
+                Powered by Gemini AI
+            </p>
+            <p class="text-xs text-gray-400 mt-2">
+                &copy; 2024 Instagram Helper. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- トースト通知用 -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full transition-transform hidden">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span id="toastMessage"></span>
+        </div>
+    </div>
+
+    <!-- JavaScriptファイル -->
+    <script src="app.js"></script>
+</body>
+</html>
