@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "functions": {
+    "api/process.js": {
+      "maxDuration": 10,
+      "memory": 1024
+    }
+  },
+  "regions": ["hnd1"],
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/public/index.html"
+    }
+  ]
+}

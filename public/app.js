@@ -103,7 +103,12 @@ processButton.addEventListener('click', async () => {
 
     try {
         // サーバーに送信
-        const response = await fetch('/api/process', {
+        // Vercel環境とローカル環境の両方に対応
+        const apiEndpoint = window.location.hostname === 'localhost'
+            ? '/api/process'
+            : '/api/process';
+
+        const response = await fetch(apiEndpoint, {
             method: 'POST',
             body: formData
         });
