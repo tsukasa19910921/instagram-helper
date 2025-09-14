@@ -251,9 +251,26 @@ processButton.addEventListener('click', async () => {
 
 // 結果表示
 function displayResults(data) {
-    // 画像の表示
+    // 画像の表示（長押し保存対応のためBlob URLも作成）
     processedImageUrl = data.processedImage;
-    processedImage.src = processedImageUrl;
+
+    // Data URLをBlob URLに変換（長押し保存をより確実にするため）
+    if (isMobileDevice()) {
+        fetch(data.processedImage)
+            .then(res => res.blob())
+            .then(blob => {
+                const blobUrl = URL.createObjectURL(blob);
+                processedImage.src = blobUrl;
+                // ダウンロード属性を追加（一部ブラウザで長押し保存を改善）
+                processedImage.setAttribute('download', `instagram-${Date.now()}.jpg`);
+            })
+            .catch(() => {
+                // エラー時は通常のData URLを使用
+                processedImage.src = processedImageUrl;
+            });
+    } else {
+        processedImage.src = processedImageUrl;
+    }
 
     // 文章の表示
     generatedText.textContent = data.generatedText || '素敵な写真が撮れました！✨';
@@ -265,16 +282,78 @@ function displayResults(data) {
     loadingSection.classList.add('hidden');
     resultSection.classList.remove('hidden');
     processButton.disabled = false;
+
+    // ボタンテキストを更新
+    updateDownloadButtonUI();
 }
 
-// 画像ダウンロード
-downloadImageButton.addEventListener('click', async () => {
+// ダウンロードボタンのUI更新
+function updateDownloadButtonUI() {
+    if (canUseShareAPI()) {
+        downloadImageButton.innerHTML = '<i class="fas fa-share-alt mr-2"></i>画像を共有・保存';
+        // ヘルプテキストを追加
+        const helpText = document.createElement('p');
+        helpText.className = 'text-xs text-gray-500 mt-2';
+        helpText.textContent = '※画像を長押しして保存することもできます';
+        if (!document.getElementById('shareHelpText')) {
+            helpText.id = 'shareHelpText';
+            downloadImageButton.parentElement.appendChild(helpText);
+        }
+    } else {
+        downloadImageButton.innerHTML = '<i class="fas fa-download mr-2"></i>画像をダウンロード';
+    }
+}
+
+// デバイス判定
+function isMobileDevice() {
+    return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+}
+
+// Share APIが使用可能かチェック
+function canUseShareAPI() {
+    return navigator.share && isMobileDevice();
+}
+
+// 画像共有（Share API使用）
+async function shareImage() {
     if (!processedImageUrl) return;
 
     try {
-        // 画像を取得
+        // Data URLをBlobに変換
         const response = await fetch(processedImageUrl);
         const blob = await response.blob();
+        const file = new File([blob], `instagram-${Date.now()}.jpg`, {
+            type: 'image/jpeg',
+            lastModified: Date.now()
+        });
+
+        // Share APIが画像共有に対応しているか確認
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                files: [file],
+                title: 'Instagram投稿画像',
+                text: '加工済みの画像です'
+            });
+            showToast('画像を共有しました', 'success');
+        } else {
+            // Share API非対応の場合は従来のダウンロード
+            await downloadImageFallback(blob);
+        }
+    } catch (error) {
+        if (error.name !== 'AbortError') {  // ユーザーがキャンセルした場合は無視
+            console.error('共有エラー:', error);
+            showToast('共有に失敗しました', 'error');
+        }
+    }
+}
+
+// 従来のダウンロード処理（フォールバック）
+async function downloadImageFallback(blob) {
+    try {
+        if (!blob) {
+            const response = await fetch(processedImageUrl);
+            blob = await response.blob();
+        }
 
         // ダウンロードリンクを作成
         const url = window.URL.createObjectURL(blob);
@@ -289,6 +368,18 @@ downloadImageButton.addEventListener('click', async () => {
         showToast('画像をダウンロードしました', 'success');
     } catch (error) {
         showToast('ダウンロードに失敗しました', 'error');
+    }
+}
+
+// 画像ダウンロード/共有ボタンのイベントハンドラ
+downloadImageButton.addEventListener('click', async () => {
+    if (!processedImageUrl) return;
+
+    // デバイスに応じて処理を分岐
+    if (canUseShareAPI()) {
+        await shareImage();
+    } else {
+        await downloadImageFallback();
     }
 });
 
@@ -346,6 +437,12 @@ newImageButton.addEventListener('click', () => {
 
     // スクロールトップ
     window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ページ読み込み時の初期設定
+document.addEventListener('DOMContentLoaded', () => {
+    // 初期UIを設定（デバイスに応じて）
+    updateDownloadButtonUI();
 });
 
 // トースト通知

@@ -16,18 +16,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **WEBインターフェース**: Tailwind CSS を使用したレスポンシブUI
 - **環境変数管理**: dotenv による設定管理（.env.example提供済み）
 - **GitHub Pages**: デモページの公開
+- **Vercel対応**: Vercel Functions を使用したサーバーレスデプロイ対応
+- **画像圧縮機能**: クライアント側での自動画像圧縮（4MB制限対応）
+- **エラーハンドリング改善**: 413エラーやタイムアウトの適切な処理
 
 ### 🔧 現在の技術仕様
 
 #### ファイル構成
 ```
 instagram投稿自動生成/
-├── server.js           # Express サーバー（メインAPI）
-├── index.html          # ランディングページ
+├── server.js           # Express サーバー（ローカル開発用）
+├── api/
+│   └── process.js      # Vercel Functions エンドポイント
+├── index.html          # ランディングページ（GitHub Pages用）
 ├── public/
 │   ├── index.html      # メインアプリケーション
-│   └── app.js          # フロントエンドJavaScript
-├── uploads/            # アップロードファイル保存
+│   └── app.js          # フロントエンドJavaScript（圧縮機能付き）
+├── uploads/            # アップロードファイル保存（ローカルのみ）
+├── vercel.json         # Vercel デプロイ設定
 ├── package.json        # 依存関係管理
 ├── .env.example        # 環境変数テンプレート
 └── .env                # 実際の環境変数（Git除外）
@@ -43,15 +49,15 @@ instagram投稿自動生成/
 - **nodemon**: ^3.0.2 (開発用)
 
 #### API エンドポイント
-- `POST /api/upload`: 画像アップロード
-- `POST /api/analyze`: 画像解析と文章生成
-- `GET /api/download/:filename`: 処理済み画像のダウンロード
+- `POST /api/process`: 画像処理と文章生成（統合エンドポイント）
+  - ローカル: Express サーバー経由
+  - Vercel: Functions 経由（メモリストレージ使用）
 
 #### 環境変数
-- `GEMINI_API_KEY`: Gemini API キー
-- `PORT`: サーバーポート（デフォルト: 3000）
-- `MAX_FILE_SIZE`: 最大ファイルサイズ（10MB）
-- `UPLOAD_DIR`: アップロードディレクトリ（uploads）
+- `GEMINI_API_KEY`: Gemini API キー（必須）
+- `PORT`: サーバーポート（ローカルのみ、デフォルト: 3000）
+- `MAX_FILE_SIZE`: 最大ファイルサイズ（ローカル: 10MB、Vercel: 4MB）
+- `UPLOAD_DIR`: アップロードディレクトリ（ローカルのみ: uploads）
 
 ## 機能仕様
 
@@ -99,6 +105,7 @@ npm start      # 本番サーバー起動
 - **HTML/CSS/JavaScript**: バニラJavaScript（React未使用）
 - **スタイリング**: Tailwind CSS（CDN）
 - **画像処理**: Canvas API（client-side）
+- **画像圧縮**: Canvas を使用した自動圧縮（4MB以上の場合）
 
 ### バックエンド
 - **サーバー**: Node.js + Express
@@ -108,7 +115,10 @@ npm start      # 本番サーバー起動
 
 ### インフラ・デプロイ
 - **開発**: ローカル環境（port 3000）
-- **デモ**: GitHub Pages
+- **デモ**: GitHub Pages（静的ページのみ）
+- **本番**: Vercel（サーバーレス関数）
+  - リージョン: 東京（hnd1）
+  - 制限: 10秒タイムアウト、4.5MBリクエストサイズ
 - **API制限**: Gemini APIの無料枠利用
 
 ## 重要な注意事項
@@ -116,15 +126,53 @@ npm start      # 本番サーバー起動
 - **セキュリティ**:
   - Gemini APIキーは環境変数で管理、絶対にコミットしない
   - アップロードファイルは適切にフィルタリング済み
-- **API制限**: Gemini Pro Vision APIの無料枠制限に注意
-- **ファイル管理**: uploads/ ディレクトリは Git 除外設定済み
+  - Vercelではメモリストレージを使用（ディスク書き込みなし）
+- **API制限**:
+  - Gemini Pro Vision APIの無料枠制限に注意
+  - Vercel無料プラン: 10秒タイムアウト、4.5MBリクエスト制限
+- **ファイル管理**:
+  - uploads/ ディレクトリは Git 除外設定済み（ローカルのみ）
+  - Vercelではメモリ内で処理、Data URLで返却
 - **動作テスト**: 各機能実装後は必ず動作テストを行う
 - **ユーザビリティ**: 直感的で使いやすい設計を重視
 
-## 既知の課題・改善点
+## Vercel デプロイ手順
 
-- エラーハンドリングの強化が必要
-- レスポンシブデザインの微調整
-- 処理中のローディング表示の改善
-- ファイルサイズ制限のUI表示
-- 生成結果の履歴機能が未実装
+1. GitHubリポジトリをVercelにインポート
+2. 環境変数設定: `GEMINI_API_KEY` のみ必要
+3. デプロイ設定:
+   - Framework Preset: Other
+   - Build Command: なし
+   - Install Command: npm install
+4. デプロイ実行
+
+## 今後実装予定の機能
+
+### 優先度: 高
+- **エラー通知の改善**: より分かりやすいエラーメッセージ
+- **処理状況の可視化**: プログレスバーの実装
+- **画像プレビューの最適化**: アスペクト比の事前確認
+
+### 優先度: 中
+- **履歴機能**: 過去の生成結果を保存・閲覧
+- **テンプレート機能**: よく使う設定の保存
+- **バッチ処理**: 複数画像の一括処理
+- **カスタムハッシュタグ**: ユーザー定義のハッシュタグセット
+
+### 優先度: 低
+- **Instagram API連携**: 直接投稿機能（OAuth認証必要）
+- **画像エフェクト**: フィルターやエフェクトの追加
+- **統計機能**: 利用状況の分析
+- **多言語対応**: 英語以外の言語サポート
+
+## 既知の課題
+
+### 解決済み
+- ✅ Vercel 413エラー: クライアント側圧縮で対応
+- ✅ favicon 404エラー: Data URL で解決
+- ✅ ファイルサイズ制限: UIに明記
+
+### 未解決
+- レスポンシブデザインの微調整が必要
+- 非常に大きな画像（10MB以上）の処理が遅い
+- Gemini API のレート制限への対応が未実装
