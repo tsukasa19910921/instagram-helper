@@ -200,6 +200,7 @@ processButton.addEventListener('click', async () => {
     formData.append('hashtagAmount', hashtagAmount.value);
     formData.append('language', document.getElementById('language').value);
     formData.append('characterStyle', document.getElementById('characterStyle').value);
+    formData.append('imageStyle', document.getElementById('imageStyle').value);
 
     try {
         // サーバーに送信

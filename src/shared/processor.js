@@ -1,6 +1,88 @@
 // src/shared/processor.js
 const sharp = require('sharp');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { Buffer } = require('node:buffer');
+
+// Stability AI APIで画像を加工する関数
+async function processImageWithStability(imageBuffer, style) {
+    const apiKey = process.env.STABILITY_API_KEY;
+
+    if (!apiKey) {
+        console.warn('Stability AI APIキーが設定されていません');
+        return null;
+    }
+
+    // スタイルに応じたプロンプト
+    const stylePrompts = {
+        'anime': 'anime style, illustration, 2d animation, japanese anime, cartoon',
+        'vintage': 'vintage photo, retro, film grain, nostalgic, old photograph, sepia',
+        'sparkle': 'sparkly, glittery, magical, shimmering effects, glamorous, dreamy'
+    };
+
+    try {
+        // ネイティブのFormDataとBlobを使用
+        const form = new FormData();
+        const blob = new Blob([imageBuffer], { type: 'image/jpeg' });
+        form.append('init_image', blob, 'image.jpg');
+
+        // テキストプロンプト
+        form.append('text_prompts[0][text]', stylePrompts[style] || 'enhance the image');
+        form.append('text_prompts[0][weight]', '1');
+
+        // 画像変換パラメータ
+        form.append('init_image_mode', 'IMAGE_STRENGTH');
+        form.append('image_strength', '0.35');  // 0.35 = 元画像を65%保持
+        form.append('samples', '1');
+        form.append('steps', '30');
+        form.append('cfg_scale', '7');
+        // width/heightは指定しない（v1 APIでは入力画像のサイズがそのまま使用される）
+
+        const response = await fetch(
+            'https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/image-to-image',
+            {
+                method: 'POST',
+                // Content-Typeを自分で設定しない（fetchが自動的にboundaryを設定）
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Accept': 'application/json'
+                },
+                body: form
+            }
+        );
+
+        if (!response.ok) {
+            const errorText = await response.text().catch(() => '');
+            console.error(`Stability API エラー: ${response.status} ${response.statusText}`, errorText);
+            return null;
+        }
+
+        const json = await response.json();
+
+        // レスポンスから画像を取得（複数の可能性に対応）
+        const artifact = json.artifacts && json.artifacts[0];
+        const base64Image = artifact?.base64 ||
+                           artifact?.b64 ||
+                           json.image_base64 ||
+                           json.image;
+
+        if (!base64Image) {
+            console.error('Stability APIから画像を取得できませんでした');
+            return null;
+        }
+
+        // BufferとDataURLの両方を返す
+        const buffer = Buffer.from(base64Image, 'base64');
+        return {
+            buffer: buffer,
+            dataUrl: `data:image/jpeg;base64,${base64Image}`,
+            base64: base64Image
+        };
+
+    } catch (error) {
+        console.error('Stability AI処理エラー:', error);
+        return null;
+    }
+}
 
 // プロンプト生成
 function buildPrompt({ textStyle, hashtagAmount, language, characterStyle }) {
@@ -176,10 +258,55 @@ async function unifiedProcessHandler(req, res) {
     }
 
     // パラメータ取得
-    const { textStyle, hashtagAmount, language, characterStyle } = req.body || {};
+    const { textStyle, hashtagAmount, language, characterStyle, imageStyle } = req.body || {};
 
-    // 画像処理（メモリ内）
-    const { dataUrl, base64 } = await processImageToSquare(req.file.buffer);
+    // 画像処理
+    let processedImageResult;
+
+    // 画像加工機能の有効/無効フラグ（将来的に有効化する際はtrueに変更）
+    const ENABLE_IMAGE_STYLING = false;
+
+    if (ENABLE_IMAGE_STYLING && imageStyle && imageStyle !== 'none') {
+        // まず正方形にトリミング（1024x1024）
+        console.log('画像を正方形にトリミング中...');
+        const squareBuffer = await sharp(req.file.buffer)
+            .rotate()
+            .resize(1024, 1024, {
+                fit: 'cover',
+                position: 'center'
+            })
+            .jpeg({ quality: 90 })
+            .toBuffer();
+
+        // Stability AIで加工
+        console.log(`Stability AIで${imageStyle}スタイルに加工中...`);
+        const styledResult = await processImageWithStability(squareBuffer, imageStyle);
+
+        if (styledResult && styledResult.buffer) {
+            // 成功：最終リサイズ（1080x1080）
+            const finalBuffer = await sharp(styledResult.buffer)
+                .resize(1080, 1080)
+                .jpeg({ quality: 90 })
+                .toBuffer();
+
+            const base64Final = finalBuffer.toString('base64');
+            processedImageResult = {
+                dataUrl: `data:image/jpeg;base64,${base64Final}`,
+                base64: base64Final
+            };
+            console.log('Stability AI処理成功');
+        } else {
+            // 失敗：トリミングのみの結果を使用
+            console.log('Stability AI処理失敗、通常のトリミングを使用');
+            processedImageResult = await processImageToSquare(req.file.buffer);
+        }
+    } else {
+        // 通常のトリミングのみ（現在はこちらが常に実行される）
+        console.log('画像を処理中...');
+        processedImageResult = await processImageToSquare(req.file.buffer);
+    }
+
+    const { dataUrl, base64 } = processedImageResult;
 
     // AI文章生成
     const { generatedText, hashtags } = await generateCaption({
