@@ -4,6 +4,9 @@ node_modules/
 # Environment variables
 .env
 
+# Claude Code guidelines
+CLAUDE.md
+
 # OS files
 .DS_Store
 Thumbs.db
