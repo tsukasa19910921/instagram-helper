@@ -199,6 +199,7 @@ processButton.addEventListener('click', async () => {
     formData.append('textStyle', textStyle.value);
     formData.append('hashtagAmount', hashtagAmount.value);
     formData.append('language', document.getElementById('language').value);
+    formData.append('characterStyle', document.getElementById('characterStyle').value);
 
     try {
         // サーバーに送信

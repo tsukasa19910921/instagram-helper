@@ -3,12 +3,21 @@ const sharp = require('sharp');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // プロンプト生成
-function buildPrompt({ textStyle, hashtagAmount, language }) {
+function buildPrompt({ textStyle, hashtagAmount, language, characterStyle }) {
   const stylePrompt = {
     'serious': 'プロフェッショナルで信頼感のある文章',
     'humor': 'ユーモアがあって親しみやすい文章',
-    'sparkle': 'キラキラした感じの楽しい文章'
+    'sparkle': 'キラキラした感じの楽しい文章',
+    'passionate': '情熱的でエネルギッシュな文章',
+    'casual': 'カジュアルで気軽な文章',
+    'elegant': 'エレガントで洗練された文章'
   }[textStyle] || 'プロフェッショナルで信頼感のある文章';
+
+  const characterPrompt = {
+    'masculine': '男性的で力強い言葉遣い',
+    'feminine': '女性的で優しい言葉遣い',
+    'neutral': '中性的でニュートラルな言葉遣い'
+  }[characterStyle] || '中性的でニュートラルな言葉遣い';
 
   const hashtagPrompt = {
     'many': '15個以上',
@@ -33,6 +42,7 @@ function buildPrompt({ textStyle, hashtagAmount, language }) {
 
 言語設定: ${languageInstructions}
 文章のスタイル: ${stylePrompt}
+キャラクター: ${characterPrompt}
 
 以下の形式で出力してください：
 
@@ -69,7 +79,7 @@ async function processImageToSquare(buffer) {
 }
 
 // Gemini APIでキャプション生成
-async function generateCaption({ base64Image, textStyle, hashtagAmount, language }) {
+async function generateCaption({ base64Image, textStyle, hashtagAmount, language, characterStyle }) {
   const apiKey = process.env.GEMINI_API_KEY;
 
   // APIキーがない場合のデフォルト
@@ -89,7 +99,7 @@ async function generateCaption({ base64Image, textStyle, hashtagAmount, language
     }
   });
 
-  const prompt = buildPrompt({ textStyle, hashtagAmount, language });
+  const prompt = buildPrompt({ textStyle, hashtagAmount, language, characterStyle });
 
   // リトライ機能付きAPI呼び出し
   async function callWithRetry(func, maxRetries = 3) {
@@ -166,7 +176,7 @@ async function unifiedProcessHandler(req, res) {
     }
 
     // パラメータ取得
-    const { textStyle, hashtagAmount, language } = req.body || {};
+    const { textStyle, hashtagAmount, language, characterStyle } = req.body || {};
 
     // 画像処理（メモリ内）
     const { dataUrl, base64 } = await processImageToSquare(req.file.buffer);
@@ -176,7 +186,8 @@ async function unifiedProcessHandler(req, res) {
       base64Image: base64,
       textStyle,
       hashtagAmount,
-      language
+      language,
+      characterStyle
     });
 
     // 統一レスポンス（Data URL形式）
