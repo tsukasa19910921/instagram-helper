@@ -89,9 +89,25 @@
 
             <!-- プレビューエリア -->
             <div id="previewArea" class="mt-6 hidden">
-                <h3 class="text-lg font-semibold mb-3">プレビュー</h3>
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-lg font-semibold">プレビュー</h3>
+                    <div class="space-x-2">
+                        <button id="changeImageButton" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                            <i class="fas fa-exchange-alt mr-1"></i>画像を変更
+                        </button>
+                        <button id="removeImageButton" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                            <i class="fas fa-times mr-1"></i>削除
+                        </button>
+                    </div>
+                </div>
                 <div class="flex justify-center">
-                    <img id="imagePreview" class="max-w-full max-h-96 rounded-lg shadow-md" alt="プレビュー">
+                    <div class="relative inline-block">
+                        <img id="imagePreview" class="max-w-full max-h-96 rounded-lg shadow-md" alt="プレビュー">
+                        <!-- モバイル向けの×ボタン（画像上に表示） -->
+                        <button id="removeImageIconButton" class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg md:hidden transition-all hover:scale-110">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -243,12 +259,10 @@
     <!-- フッター -->
     <footer class="bg-gray-800 text-white py-6 mt-12">
         <div class="container mx-auto px-4 text-center">
-            <p class="text-sm">
+            <p class="text-sm text-gray-300">
+                &copy; 2025 Instagram Helper •
                 <i class="fas fa-robot mr-1"></i>
                 Powered by Gemini AI
-            </p>
-            <p class="text-xs text-gray-400 mt-2">
-                &copy; 2024 Instagram Helper. All rights reserved.
             </p>
         </div>
     </footer>

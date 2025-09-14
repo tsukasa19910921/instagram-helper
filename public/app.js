@@ -17,6 +17,9 @@ const copyHashtagsButton = document.getElementById('copyHashtagsButton');
 const newImageButton = document.getElementById('newImageButton');
 const toast = document.getElementById('toast');
 const toastMessage = document.getElementById('toastMessage');
+const removeImageButton = document.getElementById('removeImageButton');
+const removeImageIconButton = document.getElementById('removeImageIconButton');
+const changeImageButton = document.getElementById('changeImageButton');
 
 // 現在選択されているファイル
 let selectedFile = null;
@@ -334,7 +337,7 @@ async function shareImage() {
                 title: 'Instagram投稿画像',
                 text: '加工済みの画像です'
             });
-            showToast('画像を共有しました', 'success');
+            showToast('画像を共有・保存しました', 'success');
         } else {
             // Share API非対応の場合は従来のダウンロード
             await downloadImageFallback(blob);
@@ -342,7 +345,7 @@ async function shareImage() {
     } catch (error) {
         if (error.name !== 'AbortError') {  // ユーザーがキャンセルした場合は無視
             console.error('共有エラー:', error);
-            showToast('共有に失敗しました', 'error');
+            showToast('共有・保存に失敗しました', 'error');
         }
     }
 }
@@ -422,6 +425,32 @@ async function copyToClipboard(text, message) {
     } catch (error) {
         showToast('コピーに失敗しました', 'error');
     }
+}
+
+// 画像削除機能
+function removeImage() {
+    selectedFile = null;
+    fileInput.value = '';
+    imagePreview.src = '';
+    previewArea.classList.add('hidden');
+    processButton.disabled = true;
+    processButton.classList.add('disabled:opacity-50', 'disabled:cursor-not-allowed');
+    showToast('画像を削除しました', 'info');
+}
+
+// 削除ボタンのイベントリスナー
+if (removeImageButton) {
+    removeImageButton.addEventListener('click', removeImage);
+}
+if (removeImageIconButton) {
+    removeImageIconButton.addEventListener('click', removeImage);
+}
+
+// 画像変更ボタン
+if (changeImageButton) {
+    changeImageButton.addEventListener('click', () => {
+        fileInput.click();
+    });
 }
 
 // 新しい画像ボタン
