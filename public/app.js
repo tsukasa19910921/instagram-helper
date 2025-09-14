@@ -53,6 +53,78 @@ fileInput.addEventListener('change', (e) => {
     }
 });
 
+// 画像圧縮関数（Canvas使用）
+async function compressImage(file) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            img.src = e.target.result;
+        };
+
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // 最大幅・高さを設定（圧縮用）
+            const maxWidth = 1920;
+            const maxHeight = 1920;
+            let width = img.width;
+            let height = img.height;
+
+            // アスペクト比を保持してリサイズ
+            if (width > height) {
+                if (width > maxWidth) {
+                    height = height * (maxWidth / width);
+                    width = maxWidth;
+                }
+            } else {
+                if (height > maxHeight) {
+                    width = width * (maxHeight / height);
+                    height = maxHeight;
+                }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            // 画像を描画
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // CanvasをBlobに変換（品質調整でファイルサイズを減らす）
+            canvas.toBlob((blob) => {
+                if (blob.size > 4 * 1024 * 1024) {
+                    // まだ大きい場合はさらに品質を下げる
+                    canvas.toBlob((blob2) => {
+                        const compressedFile = new File([blob2], file.name, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        resolve(compressedFile);
+                    }, 'image/jpeg', 0.7);  // 品質70%
+                } else {
+                    const compressedFile = new File([blob], file.name, {
+                        type: 'image/jpeg',
+                        lastModified: Date.now()
+                    });
+                    resolve(compressedFile);
+                }
+            }, 'image/jpeg', 0.85);  // 品質85%
+        };
+
+        img.onerror = () => {
+            reject(new Error('画像の読み込みに失敗しました'));
+        };
+
+        reader.onerror = () => {
+            reject(new Error('ファイルの読み込みに失敗しました'));
+        };
+
+        reader.readAsDataURL(file);
+    });
+}
+
 // ファイル選択処理
 function handleFileSelect(file) {
     // ファイルバリデーション
@@ -62,14 +134,38 @@ function handleFileSelect(file) {
         return;
     }
 
-    // ファイルサイズチェック（10MB）
-    const maxSize = 10 * 1024 * 1024;
+    // ファイルサイズチェック（Vercel無料プラン対応: 4MB）
+    const maxSize = 4 * 1024 * 1024;  // 4MBに制限
     if (file.size > maxSize) {
-        showToast('ファイルサイズは10MB以下にしてください', 'error');
+        showToast('画像を圧縮しています...', 'info');
+
+        // 自動圧縮を実行
+        compressImage(file).then(compressedFile => {
+            const sizeInMB = (compressedFile.size / (1024 * 1024)).toFixed(2);
+            showToast(`画像を圧縮しました (${sizeInMB}MB)`, 'success');
+            handleCompressedFile(compressedFile);
+        }).catch(error => {
+            showToast('画像の圧縮に失敗しました: ' + error.message, 'error');
+        });
         return;
     }
 
+    // ファイルサイズが問題ない場合も圧縮を実行（品質最適化）
+    compressImage(file).then(compressedFile => {
+        handleCompressedFile(compressedFile);
+    }).catch(error => {
+        // 圧縮失敗時は元ファイルを使用
+        handleCompressedFile(file);
+    });
+}
+
+// 圧縮済みファイルの処理
+function handleCompressedFile(file) {
     selectedFile = file;
+
+    // ファイルサイズを表示
+    const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+    console.log(`圧縮後のファイルサイズ: ${sizeInMB}MB`);
 
     // プレビュー表示
     const reader = new FileReader();
@@ -113,11 +209,34 @@ processButton.addEventListener('click', async () => {
             body: formData
         });
 
-        const data = await response.json();
-
+        // エラーハンドリングの改善
         if (!response.ok) {
-            throw new Error(data.error || 'サーバーエラーが発生しました');
+            let errorMessage = 'サーバーエラーが発生しました';
+
+            // ステータスコードに応じたメッセージ
+            if (response.status === 413) {
+                errorMessage = 'ファイルサイズが大きすぎます。画像を圧縮してください。';
+            } else if (response.status === 504 || response.status === 408) {
+                errorMessage = '処理がタイムアウトしました。より小さい画像をお試しください。';
+            } else if (response.status === 500) {
+                errorMessage = 'サーバーエラーが発生しました。しばらく待ってから再度お試しください。';
+            }
+
+            // JSONレスポンスを試みる
+            try {
+                const data = await response.json();
+                if (data.error) {
+                    errorMessage = data.error;
+                }
+            } catch (e) {
+                // JSONパース失敗の場合はデフォルトメッセージを使用
+                console.error('Error response parsing failed:', e);
+            }
+
+            throw new Error(errorMessage);
         }
+
+        const data = await response.json();
 
         // 結果の表示
         displayResults(data);
