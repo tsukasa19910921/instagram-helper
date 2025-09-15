@@ -317,5 +317,11 @@
 
     <!-- JavaScriptファイル -->
     <script src="app.js"></script>
+
+    <!-- Vercel Speed Insights -->
+    <script type="module">
+        import { injectSpeedInsights } from '@vercel/speed-insights';
+        injectSpeedInsights();
+    </script>
 </body>
 </html>
