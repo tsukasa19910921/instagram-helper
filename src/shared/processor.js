@@ -85,7 +85,7 @@ async function processImageWithStability(imageBuffer, style) {
 }
 
 // プロンプト生成
-function buildPrompt({ textStyle, hashtagAmount, language, characterStyle }) {
+function buildPrompt({ textStyle, hashtagAmount, language, characterStyle, requiredKeyword }) {
   const stylePrompt = {
     'serious': 'プロフェッショナルで信頼感のある文章',
     'humor': 'ユーモアがあって親しみやすい文章',
@@ -119,10 +119,14 @@ function buildPrompt({ textStyle, hashtagAmount, language, characterStyle }) {
     'bilingual': '日本語と英語両方のハッシュタグをバランスよく'
   }[language] || '日本語のハッシュタグ';
 
+  const keywordInstruction = requiredKeyword
+    ? `重要: 投稿文に「${requiredKeyword}」というキーワードを必ず含めてください。自然な形で文章に組み込んでください。\nハッシュタグにも#${requiredKeyword}を必ず含めてください。\n\n`
+    : '';
+
   return `
 この画像を見て、Instagram投稿用の文章を生成してください。
 
-言語設定: ${languageInstructions}
+${keywordInstruction}言語設定: ${languageInstructions}
 文章のスタイル: ${stylePrompt}
 キャラクター: ${characterPrompt}
 
@@ -161,7 +165,7 @@ async function processImageToSquare(buffer) {
 }
 
 // Gemini APIでキャプション生成
-async function generateCaption({ base64Image, textStyle, hashtagAmount, language, characterStyle }) {
+async function generateCaption({ base64Image, textStyle, hashtagAmount, language, characterStyle, requiredKeyword }) {
   const apiKey = process.env.GEMINI_API_KEY;
 
   // APIキーがない場合のデフォルト
@@ -181,7 +185,7 @@ async function generateCaption({ base64Image, textStyle, hashtagAmount, language
     }
   });
 
-  const prompt = buildPrompt({ textStyle, hashtagAmount, language, characterStyle });
+  const prompt = buildPrompt({ textStyle, hashtagAmount, language, characterStyle, requiredKeyword });
 
   // リトライ機能付きAPI呼び出し
   async function callWithRetry(func, maxRetries = 3) {
@@ -221,10 +225,15 @@ async function generateCaption({ base64Image, textStyle, hashtagAmount, language
     const textMatch = fullText.match(/【投稿文】\s*([\s\S]*?)【ハッシュタグ】/);
     const hashtagMatch = fullText.match(/【ハッシュタグ】\s*([\s\S]*)/);
 
-    return {
-      generatedText: textMatch ? textMatch[1].trim() : '素敵な写真が撮れました！✨',
-      hashtags: hashtagMatch ? hashtagMatch[1].trim() : '#instagram #photo #instagood'
-    };
+    let generatedText = textMatch ? textMatch[1].trim() : '素敵な写真が撮れました！✨';
+    let hashtags = hashtagMatch ? hashtagMatch[1].trim() : '#instagram #photo #instagood';
+
+    // 必須キーワードがハッシュタグに含まれていない場合、最初に追加
+    if (requiredKeyword && !hashtags.includes(`#${requiredKeyword}`)) {
+      hashtags = `#${requiredKeyword} ${hashtags}`;
+    }
+
+    return { generatedText, hashtags };
   } catch (error) {
     console.error('Gemini API Error:', error);
     return {
@@ -258,7 +267,7 @@ async function unifiedProcessHandler(req, res) {
     }
 
     // パラメータ取得
-    const { textStyle, hashtagAmount, language, characterStyle, imageStyle } = req.body || {};
+    const { textStyle, hashtagAmount, language, characterStyle, imageStyle, requiredKeyword } = req.body || {};
 
     // 画像処理
     let processedImageResult;
@@ -314,7 +323,8 @@ async function unifiedProcessHandler(req, res) {
       textStyle,
       hashtagAmount,
       language,
-      characterStyle
+      characterStyle,
+      requiredKeyword
     });
 
     // 統一レスポンス（Data URL形式）

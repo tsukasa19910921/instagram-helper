@@ -20,6 +20,8 @@ const toastMessage = document.getElementById('toastMessage');
 const removeImageButton = document.getElementById('removeImageButton');
 const removeImageIconButton = document.getElementById('removeImageIconButton');
 const changeImageButton = document.getElementById('changeImageButton');
+const keywordError = document.getElementById('keywordError');
+const requiredKeywordInput = document.getElementById('requiredKeyword');
 
 // 現在選択されているファイル
 let selectedFile = null;
@@ -181,10 +183,37 @@ function handleCompressedFile(file) {
     reader.readAsDataURL(file);
 }
 
+// 必須キーワードの空白検証関数
+function validateRequiredKeyword(keyword) {
+    // 半角空白と全角空白の両方をチェック
+    const hasSpace = keyword && (keyword.includes(' ') || keyword.includes('　'));
+
+    if (keywordError) {  // 要素が存在する場合のみ処理
+        if (hasSpace) {
+            keywordError.classList.remove('hidden');
+            return false;
+        } else {
+            keywordError.classList.add('hidden');
+            return true;
+        }
+    }
+
+    return !hasSpace;  // 要素がない場合も検証結果を返す
+}
+
 // 処理ボタンクリック
 processButton.addEventListener('click', async () => {
     if (!selectedFile) {
         showToast('画像を選択してください', 'error');
+        return;
+    }
+
+    // 必須キーワードの検証
+    const requiredKeyword = requiredKeywordInput ? requiredKeywordInput.value.trim() : '';
+
+    // 共通関数で検証
+    if (!validateRequiredKeyword(requiredKeyword)) {
+        showToast('必須キーワードは空白を含まない一単語で入力してください', 'error');
         return;
     }
 
@@ -201,6 +230,9 @@ processButton.addEventListener('click', async () => {
     formData.append('language', document.getElementById('language').value);
     formData.append('characterStyle', document.getElementById('characterStyle').value);
     formData.append('imageStyle', document.getElementById('imageStyle').value);
+    if (requiredKeyword) {
+        formData.append('requiredKeyword', requiredKeyword);
+    }
 
     try {
         // サーバーに送信
@@ -474,6 +506,15 @@ newImageButton.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
     // 初期UIを設定（デバイスに応じて）
     updateDownloadButtonUI();
+
+    // 必須キーワード入力時のリアルタイム検証
+    if (requiredKeywordInput) {
+        requiredKeywordInput.addEventListener('input', () => {
+            const value = requiredKeywordInput.value;
+            // 共通関数で検証
+            validateRequiredKeyword(value);
+        });
+    }
 });
 
 // トースト通知
