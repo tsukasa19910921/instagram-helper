@@ -135,7 +135,7 @@
                     <i class="fas fa-star mr-1 text-red-500"></i>
                     必須キーワード
                 </label>
-                <input type="text" id="requiredKeyword" placeholder="例: 旅行 料理 ファッション など（一単語のみ）"
+                <input type="text" id="requiredKeyword" placeholder="例: 旅行 料理 など（一単語のみ）"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                 <p class="text-xs text-gray-500 mt-1">投稿文とハッシュタグに必ず含まれるキーワード（空白を含まない一単語のみ）</p>
                 <div id="keywordError" class="hidden mt-2 text-xs text-red-600 flex items-center">
@@ -343,16 +343,17 @@
     <!-- JavaScriptファイル -->
     <script src="app.js"></script>
 
+    <!-- Vercel解析無効化：Error対応 -->
     <!-- Vercel Speed Insights -->
-    <script type="module">
+    <!-- <script type="module">
         import { injectSpeedInsights } from '@vercel/speed-insights';
         injectSpeedInsights();
-    </script>
+    </script> -->
 
     <!-- Vercel Analytics -->
-    <script type="module">
+    <!-- <script type="module">
         import { inject } from '@vercel/analytics';
         inject();
-    </script>
+    </script> -->
 </body>
 </html>

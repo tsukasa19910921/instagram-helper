@@ -254,7 +254,7 @@ processButton.addEventListener('click', async () => {
             if (response.status === 413) {
                 errorMessage = 'ファイルサイズが大きすぎます。画像を圧縮してください。';
             } else if (response.status === 504 || response.status === 408) {
-                errorMessage = '処理がタイムアウトしました。より小さい画像をお試しください。';
+                errorMessage = '処理がタイムアウトしました。もう一度試すかより小さい画像をお試しください。';
             } else if (response.status === 500) {
                 errorMessage = 'サーバーエラーが発生しました。しばらく待ってから再度お試しください。';
             }

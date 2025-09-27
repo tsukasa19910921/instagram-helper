@@ -177,8 +177,9 @@ async function generateCaption({ base64Image, textStyle, hashtagAmount, language
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
+  // Gemini 2.5 Flash-Liteを使用（高速・低コスト版）
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.5-flash-lite',
     generationConfig: {
       maxOutputTokens: 500,
       temperature: 0.7
@@ -193,19 +194,31 @@ async function generateCaption({ base64Image, textStyle, hashtagAmount, language
       try {
         return await func();
       } catch (error) {
+        const msg = String(error?.message || error);
+        const retriable = /(?:429|500|502|503|504)/.test(msg);
+        const notFound = /404/.test(msg);
+
         console.log(`API呼び出し失敗 (試行 ${i + 1}/${maxRetries}):`, error.message);
-        if (error.message.includes('503') && i < maxRetries - 1) {
-          const waitTime = 2000 * (i + 1);
-          console.log(`${waitTime}ms 待機してリトライします...`);
-          await new Promise(r => setTimeout(r, waitTime));
-          continue;
+
+        // 404の場合はモデル名の問題の可能性を示唆
+        if (notFound) {
+          console.error('モデルが見つかりません。Gemini 2.5 Flashを使用してください。');
+          throw error;
         }
-        throw error;
+        if (!retriable || i === maxRetries - 1) throw error;
+
+        const waitTime = 2000 * (i + 1);
+        console.log(`${waitTime}ms 待機してリトライします...`);
+        await new Promise(r => setTimeout(r, waitTime));
       }
     }
   }
 
   try {
+    console.log('Gemini APIを呼び出し中...');
+    console.log('使用モデル: gemini-2.5-flash-lite');
+    console.log('APIキー存在確認:', !!apiKey);
+
     const result = await callWithRetry(() =>
       model.generateContent([
         prompt,
@@ -218,12 +231,24 @@ async function generateCaption({ base64Image, textStyle, hashtagAmount, language
       ])
     );
 
+    console.log('API呼び出し成功、レスポンス取得中...');
     const response = await result.response;
+
+    // レスポンスの詳細を確認
+    console.log('レスポンスオブジェクト:', response);
+    console.log('response.text関数存在:', typeof response.text);
+
     const fullText = response.text() || '';
+
+    console.log('API応答全文:', fullText);
+    console.log('API応答長さ:', fullText.length);
 
     // 投稿文とハッシュタグを分離
     const textMatch = fullText.match(/【投稿文】\s*([\s\S]*?)【ハッシュタグ】/);
     const hashtagMatch = fullText.match(/【ハッシュタグ】\s*([\s\S]*)/);
+
+    console.log('textMatch:', textMatch ? '見つかりました' : '見つかりません');
+    console.log('hashtagMatch:', hashtagMatch ? '見つかりました' : '見つかりません');
 
     let generatedText = textMatch ? textMatch[1].trim() : '素敵な写真が撮れました！✨';
     let hashtags = hashtagMatch ? hashtagMatch[1].trim() : '#instagram #photo #instagood';
@@ -236,6 +261,12 @@ async function generateCaption({ base64Image, textStyle, hashtagAmount, language
     return { generatedText, hashtags };
   } catch (error) {
     console.error('Gemini API Error:', error);
+    console.error('エラーの詳細:', {
+      message: error.message,
+      status: error.status,
+      statusText: error.statusText,
+      stack: error.stack
+    });
     return {
       generatedText: '素敵な写真が撮れました！✨',
       hashtags: '#instagram #photo #instagood'
