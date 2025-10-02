@@ -124,12 +124,24 @@ function createLanguageSwitcher() {
     return switcher;
 }
 
+// 言語コードに応じた国旗と短縮ラベルを取得
+function getLanguageButtonContent(langCode, currentLang) {
+    const flag = langCode === 'ja' ? '🇯🇵' : '🇺🇸';
+    const shortLabel = currentLang === 'ja'
+        ? (langCode === 'ja' ? '日' : '英')
+        : (langCode === 'ja' ? 'JA' : 'EN');
+    return { flag, shortLabel };
+}
+
 // 言語ボタンを作成
 function createLanguageButton(langCode, flag, label) {
     const button = document.createElement('button');
     button.className = 'language-btn px-3 py-2 rounded-full transition-all duration-200 flex items-center space-x-1 hover:scale-105';
     button.dataset.lang = langCode;
-    button.innerHTML = `<span class="text-lg">${flag}</span><span class="text-sm font-medium hidden sm:inline">${label}</span>`;
+
+    // ボタンの内容を設定
+    const content = getLanguageButtonContent(langCode, i18n.getCurrentLanguage());
+    button.innerHTML = `<span class="text-lg">${content.flag}</span><span class="text-sm font-medium">${content.shortLabel}</span>`;
 
     button.addEventListener('click', () => {
         i18n.setLanguage(langCode);
@@ -144,6 +156,13 @@ function createLanguageButton(langCode, flag, label) {
 function updateLanguageButtons(activeLang) {
     const buttons = document.querySelectorAll('.language-btn');
     buttons.forEach(btn => {
+        const langCode = btn.dataset.lang;
+
+        // ボタンのテキストを更新（共通関数を使用）
+        const content = getLanguageButtonContent(langCode, activeLang);
+        btn.innerHTML = `<span class="text-lg">${content.flag}</span><span class="text-sm font-medium">${content.shortLabel}</span>`;
+
+        // スタイルを更新
         if (btn.dataset.lang === activeLang) {
             btn.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-pink-600', 'text-white', 'shadow-md');
             btn.classList.remove('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
