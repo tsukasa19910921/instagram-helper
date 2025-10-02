@@ -115,11 +115,11 @@ function createLanguageSwitcher() {
     const jaButton = createLanguageButton('ja', '🇯🇵', '日本語');
     const enButton = createLanguageButton('en', '🇺🇸', 'English');
 
-    // 現在の言語に応じてアクティブスタイルを設定
-    updateLanguageButtons(i18n.getCurrentLanguage());
-
     switcher.appendChild(jaButton);
     switcher.appendChild(enButton);
+
+    // 現在の言語に応じてアクティブスタイルを設定（ボタン追加後に実行）
+    updateLanguageButtons(i18n.getCurrentLanguage());
 
     return switcher;
 }
@@ -245,6 +245,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 初期コンテンツを更新
     updatePageContent();
+
+    // 言語ボタンのスタイルを初期化（確実に適用するため再度実行）
+    updateLanguageButtons(detectedLanguage);
 });
 
 // エクスポート（他のスクリプトから使用可能にする）
