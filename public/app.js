@@ -135,22 +135,22 @@ function handleFileSelect(file) {
     // ファイルバリデーション
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
     if (!validTypes.includes(file.type)) {
-        showToast('JPG、PNG、GIFファイルのみアップロード可能です', 'error');
+        showToast(window.i18n ? i18n.t('toast.imageFormatError') : 'JPG、PNG、GIFファイルのみアップロード可能です', 'error');
         return;
     }
 
     // ファイルサイズチェック（Vercel無料プラン対応: 4MB）
     const maxSize = 4 * 1024 * 1024;  // 4MBに制限
     if (file.size > maxSize) {
-        showToast('画像を圧縮しています...', 'info');
+        showToast(window.i18n ? i18n.t('toast.compressing') : '画像を圧縮しています...', 'info');
 
         // 自動圧縮を実行
         compressImage(file).then(compressedFile => {
             const sizeInMB = (compressedFile.size / (1024 * 1024)).toFixed(2);
-            showToast(`画像を圧縮しました (${sizeInMB}MB)`, 'success');
+            showToast(window.i18n ? `${i18n.t('toast.compressed')} (${sizeInMB}MB)` : `画像を圧縮しました (${sizeInMB}MB)`, 'success');
             handleCompressedFile(compressedFile);
         }).catch(error => {
-            showToast('画像の圧縮に失敗しました: ' + error.message, 'error');
+            showToast(window.i18n ? `${i18n.t('toast.compressionFailed')}: ${error.message}` : '画像の圧縮に失敗しました: ' + error.message, 'error');
         });
         return;
     }
@@ -204,7 +204,7 @@ function validateRequiredKeyword(keyword) {
 // 処理ボタンクリック
 processButton.addEventListener('click', async () => {
     if (!selectedFile) {
-        showToast('画像を選択してください', 'error');
+        showToast(window.i18n ? i18n.t('toast.selectImage') : '画像を選択してください', 'error');
         return;
     }
 
@@ -213,7 +213,7 @@ processButton.addEventListener('click', async () => {
 
     // 共通関数で検証
     if (!validateRequiredKeyword(requiredKeyword)) {
-        showToast('必須キーワードは空白を含まない一単語で入力してください', 'error');
+        showToast(window.i18n ? i18n.t('toast.keywordError') : '必須キーワードは空白を含まない一単語で入力してください', 'error');
         return;
     }
 
@@ -248,15 +248,15 @@ processButton.addEventListener('click', async () => {
 
         // エラーハンドリングの改善
         if (!response.ok) {
-            let errorMessage = 'サーバーエラーが発生しました';
+            let errorMessage = window.i18n ? i18n.t('toast.serverError') : 'サーバーエラーが発生しました';
 
             // ステータスコードに応じたメッセージ
             if (response.status === 413) {
-                errorMessage = 'ファイルサイズが大きすぎます。画像を圧縮してください。';
+                errorMessage = window.i18n ? i18n.t('toast.fileSizeTooLarge') : 'ファイルサイズが大きすぎます。画像を圧縮してください。';
             } else if (response.status === 504 || response.status === 408) {
-                errorMessage = '処理がタイムアウトしました。もう一度試すかより小さい画像をお試しください。';
+                errorMessage = window.i18n ? i18n.t('toast.timeout') : '処理がタイムアウトしました。もう一度試すかより小さい画像をお試しください。';
             } else if (response.status === 500) {
-                errorMessage = 'サーバーエラーが発生しました。しばらく待ってから再度お試しください。';
+                errorMessage = window.i18n ? i18n.t('toast.serverError') : 'サーバーエラーが発生しました。しばらく待ってから再度お試しください。';
             }
 
             // JSONレスポンスを試みる
@@ -280,7 +280,7 @@ processButton.addEventListener('click', async () => {
 
     } catch (error) {
         console.error('処理エラー:', error);
-        showToast(error.message || '処理中にエラーが発生しました', 'error');
+        showToast(error.message || (window.i18n ? i18n.t('toast.processingError') : '処理中にエラーが発生しました'), 'error');
         processButton.disabled = false;
         loadingSection.classList.add('hidden');
     }
@@ -327,17 +327,18 @@ function displayResults(data) {
 // ダウンロードボタンのUI更新
 function updateDownloadButtonUI() {
     if (canUseShareAPI()) {
-        downloadImageButton.innerHTML = '<i class="fas fa-share-alt mr-2"></i>画像を共有・保存';
+        downloadImageButton.innerHTML = `<i class="fas fa-share-alt mr-2"></i><span data-i18n="results.processedImage.share">${window.i18n ? i18n.t('results.processedImage.share') : '画像を共有・保存'}</span>`;
         // ヘルプテキストを追加
         const helpText = document.createElement('p');
         helpText.className = 'text-xs text-gray-500 mt-2';
-        helpText.textContent = '※画像を長押しして保存することもできます';
+        helpText.setAttribute('data-i18n', 'results.processedImage.shareHelpText');
+        helpText.textContent = window.i18n ? i18n.t('results.processedImage.shareHelpText') : '※画像を長押しして保存することもできます';
         if (!document.getElementById('shareHelpText')) {
             helpText.id = 'shareHelpText';
             downloadImageButton.parentElement.appendChild(helpText);
         }
     } else {
-        downloadImageButton.innerHTML = '<i class="fas fa-download mr-2"></i>画像をダウンロード';
+        downloadImageButton.innerHTML = `<i class="fas fa-download mr-2"></i><span data-i18n="results.processedImage.download">${window.i18n ? i18n.t('results.processedImage.download') : '画像をダウンロード'}</span>`;
     }
 }
 
@@ -371,7 +372,7 @@ async function shareImage() {
                 title: 'Instagram投稿画像',
                 text: '加工済みの画像です'
             });
-            showToast('画像を共有・保存しました', 'success');
+            showToast(window.i18n ? i18n.t('toast.shareSuccess') : '画像を共有・保存しました', 'success');
         } else {
             // Share API非対応の場合は従来のダウンロード
             await downloadImageFallback(blob);
@@ -379,7 +380,7 @@ async function shareImage() {
     } catch (error) {
         if (error.name !== 'AbortError') {  // ユーザーがキャンセルした場合は無視
             console.error('共有エラー:', error);
-            showToast('共有・保存に失敗しました', 'error');
+            showToast(window.i18n ? i18n.t('toast.shareFailed') : '共有・保存に失敗しました', 'error');
         }
     }
 }
@@ -402,9 +403,9 @@ async function downloadImageFallback(blob) {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
 
-        showToast('画像をダウンロードしました', 'success');
+        showToast(window.i18n ? i18n.t('toast.downloadSuccess') : '画像をダウンロードしました', 'success');
     } catch (error) {
-        showToast('ダウンロードに失敗しました', 'error');
+        showToast(window.i18n ? i18n.t('toast.downloadFailed') : 'ダウンロードに失敗しました', 'error');
     }
 }
 
@@ -422,19 +423,19 @@ downloadImageButton.addEventListener('click', async () => {
 
 // テキストコピー
 copyTextButton.addEventListener('click', () => {
-    copyToClipboard(generatedText.textContent, '文章をコピーしました');
+    copyToClipboard(generatedText.textContent, window.i18n ? i18n.t('toast.textCopied') : '文章をコピーしました');
 });
 
 // ハッシュタグコピー
 copyHashtagsButton.addEventListener('click', () => {
-    copyToClipboard(hashtags.textContent, 'ハッシュタグをコピーしました');
+    copyToClipboard(hashtags.textContent, window.i18n ? i18n.t('toast.hashtagsCopied') : 'ハッシュタグをコピーしました');
 });
 
 // すべてコピー（文章＋ハッシュタグ）
 const copyAllButton = document.getElementById('copyAllButton');
 copyAllButton.addEventListener('click', () => {
     const fullText = `${generatedText.textContent}\n\n${hashtags.textContent}`;
-    copyToClipboard(fullText, '文章とハッシュタグをコピーしました');
+    copyToClipboard(fullText, window.i18n ? i18n.t('toast.allCopied') : '文章とハッシュタグをコピーしました');
 });
 
 // クリップボードにコピー
@@ -457,7 +458,7 @@ async function copyToClipboard(text, message) {
             showToast(message, 'success');
         }
     } catch (error) {
-        showToast('コピーに失敗しました', 'error');
+        showToast(window.i18n ? i18n.t('toast.copyFailed') : 'コピーに失敗しました', 'error');
     }
 }
 
@@ -469,7 +470,7 @@ function removeImage() {
     previewArea.classList.add('hidden');
     processButton.disabled = true;
     processButton.classList.add('disabled:opacity-50', 'disabled:cursor-not-allowed');
-    showToast('画像を削除しました', 'info');
+    showToast(window.i18n ? i18n.t('toast.imageDeleted') : '画像を削除しました', 'info');
 }
 
 // 削除ボタンのイベントリスナー

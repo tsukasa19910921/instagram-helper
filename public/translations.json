@@ -1,0 +1,260 @@
+{
+  "ja": {
+    "header": {
+      "title": "Instagram Helper",
+      "subtitle": "投稿を効率化するAIアシスタント"
+    },
+    "upload": {
+      "title": "画像をアップロード",
+      "clickToSelect": "クリックして画像を選択",
+      "dragAndDrop": "またはドラッグ&ドロップ",
+      "supportedFormats": "対応形式: JPG, PNG, GIF (最大4MB・自動圧縮対応)",
+      "autoCompress": "※4MB以上の画像は自動的に圧縮されます",
+      "preview": "プレビュー",
+      "changeImage": "画像を変更",
+      "remove": "削除"
+    },
+    "settings": {
+      "title": "投稿設定",
+      "requiredKeyword": {
+        "label": "必須キーワード",
+        "placeholder": "例: 旅行 料理 など（一単語のみ）",
+        "description": "投稿文とハッシュタグに必ず含まれるキーワード（空白を含まない一単語のみ）",
+        "error": "必須キーワードは空白を含まない一単語で入力してください"
+      },
+      "textStyle": {
+        "label": "文章のテイスト",
+        "description": "投稿文のスタイルを選択",
+        "options": {
+          "serious": "まじめ",
+          "humor": "ユーモア",
+          "sparkle": "キラキラ",
+          "passionate": "情熱的",
+          "casual": "カジュアル",
+          "elegant": "エレガント"
+        }
+      },
+      "characterStyle": {
+        "label": "文体キャラクター",
+        "description": "文章の雰囲気を調整",
+        "options": {
+          "masculine": "男性的",
+          "feminine": "女性的",
+          "neutral": "中性的（ニュートラル）"
+        }
+      },
+      "hashtagAmount": {
+        "label": "ハッシュタグの量",
+        "description": "ハッシュタグの数を調整",
+        "options": {
+          "many": "多い (15個以上)",
+          "normal": "普通 (8〜10個)",
+          "few": "少ない (3〜5個)"
+        }
+      },
+      "language": {
+        "label": "言語設定",
+        "description": "投稿文の言語を選択",
+        "options": {
+          "japanese": "日本語",
+          "english": "英語",
+          "bilingual": "日英併記"
+        }
+      },
+      "imageStyle": {
+        "label": "画像加工スタイル",
+        "comingSoon": "Coming Soon",
+        "description": "AI画像加工機能は品質向上のため準備中です",
+        "options": {
+          "none": "そのまま（トリミングのみ）",
+          "anime": "アニメ風 🎨 - To be Updated",
+          "vintage": "ビンテージ 📷 - To be Updated",
+          "sparkle": "キラキラ ✨ - To be Updated"
+        }
+      }
+    },
+    "process": {
+      "button": "画像を加工して文章を生成",
+      "processing": "処理中です...",
+      "analyzing": "画像の解析と文章生成を行っています"
+    },
+    "results": {
+      "processedImage": {
+        "title": "加工済み画像",
+        "download": "画像をダウンロード",
+        "share": "画像を共有・保存",
+        "shareHelpText": "※画像を長押しして保存することもできます"
+      },
+      "generatedText": {
+        "title": "投稿文章",
+        "copy": "文章をコピー"
+      },
+      "hashtags": {
+        "title": "ハッシュタグ",
+        "copy": "ハッシュタグをコピー"
+      },
+      "copyAll": "すべてコピー（文章＋ハッシュタグ）",
+      "newImage": "新しい画像を処理"
+    },
+    "toast": {
+      "imageFormatError": "JPG、PNG、GIFファイルのみアップロード可能です",
+      "compressing": "画像を圧縮しています...",
+      "compressed": "画像を圧縮しました",
+      "compressionFailed": "画像の圧縮に失敗しました",
+      "selectImage": "画像を選択してください",
+      "keywordError": "必須キーワードは空白を含まない一単語で入力してください",
+      "copied": "コピーしました",
+      "textCopied": "文章をコピーしました",
+      "hashtagsCopied": "ハッシュタグをコピーしました",
+      "allCopied": "文章とハッシュタグをコピーしました",
+      "copyFailed": "コピーに失敗しました",
+      "imageDeleted": "画像を削除しました",
+      "shareSuccess": "画像を共有・保存しました",
+      "shareFailed": "共有・保存に失敗しました",
+      "downloadSuccess": "画像をダウンロードしました",
+      "downloadFailed": "ダウンロードに失敗しました",
+      "fileSizeTooLarge": "ファイルサイズが大きすぎます。画像を圧縮してください。",
+      "timeout": "処理がタイムアウトしました。もう一度試すかより小さい画像をお試しください。",
+      "serverError": "サーバーエラーが発生しました。しばらく待ってから再度お試しください。",
+      "processingError": "処理中にエラーが発生しました"
+    },
+    "footer": {
+      "copyright": "© 2025 Instagram Helper • ",
+      "poweredBy": "Powered by Gemini AI"
+    },
+    "languageSwitch": {
+      "label": "Language",
+      "ja": "日本語",
+      "en": "English"
+    }
+  },
+  "en": {
+    "header": {
+      "title": "Instagram Helper",
+      "subtitle": "AI Assistant for Efficient Posting"
+    },
+    "upload": {
+      "title": "Upload Image",
+      "clickToSelect": "Click to Select Image",
+      "dragAndDrop": "or Drag & Drop",
+      "supportedFormats": "Supported: JPG, PNG, GIF (Max 4MB・Auto Compression)",
+      "autoCompress": "※Images over 4MB will be automatically compressed",
+      "preview": "Preview",
+      "changeImage": "Change Image",
+      "remove": "Remove"
+    },
+    "settings": {
+      "title": "Post Settings",
+      "requiredKeyword": {
+        "label": "Required Keyword",
+        "placeholder": "e.g., travel, food, etc. (single word only)",
+        "description": "Keyword that must be included in post and hashtags (single word without spaces)",
+        "error": "Required keyword must be a single word without spaces"
+      },
+      "textStyle": {
+        "label": "Text Style",
+        "description": "Select post style",
+        "options": {
+          "serious": "Serious",
+          "humor": "Humorous",
+          "sparkle": "Sparkly",
+          "passionate": "Passionate",
+          "casual": "Casual",
+          "elegant": "Elegant"
+        }
+      },
+      "characterStyle": {
+        "label": "Writing Character",
+        "description": "Adjust text atmosphere",
+        "options": {
+          "masculine": "Masculine",
+          "feminine": "Feminine",
+          "neutral": "Neutral"
+        }
+      },
+      "hashtagAmount": {
+        "label": "Hashtag Amount",
+        "description": "Adjust hashtag count",
+        "options": {
+          "many": "Many (15+)",
+          "normal": "Normal (8-10)",
+          "few": "Few (3-5)"
+        }
+      },
+      "language": {
+        "label": "Language Setting",
+        "description": "Select post language",
+        "options": {
+          "japanese": "Japanese",
+          "english": "English",
+          "bilingual": "Japanese & English"
+        }
+      },
+      "imageStyle": {
+        "label": "Image Style",
+        "comingSoon": "Coming Soon",
+        "description": "AI image processing is being prepared for quality improvement",
+        "options": {
+          "none": "Original (Crop Only)",
+          "anime": "Anime Style 🎨 - To be Updated",
+          "vintage": "Vintage 📷 - To be Updated",
+          "sparkle": "Sparkly ✨ - To be Updated"
+        }
+      }
+    },
+    "process": {
+      "button": "Process Image & Generate Text",
+      "processing": "Processing...",
+      "analyzing": "Analyzing image and generating text"
+    },
+    "results": {
+      "processedImage": {
+        "title": "Processed Image",
+        "download": "Download Image",
+        "share": "Share/Save Image",
+        "shareHelpText": "※You can also long-press the image to save"
+      },
+      "generatedText": {
+        "title": "Post Caption",
+        "copy": "Copy Caption"
+      },
+      "hashtags": {
+        "title": "Hashtags",
+        "copy": "Copy Hashtags"
+      },
+      "copyAll": "Copy All (Caption + Hashtags)",
+      "newImage": "Process New Image"
+    },
+    "toast": {
+      "imageFormatError": "Only JPG, PNG, and GIF files are supported",
+      "compressing": "Compressing image...",
+      "compressed": "Image compressed",
+      "compressionFailed": "Failed to compress image",
+      "selectImage": "Please select an image",
+      "keywordError": "Required keyword must be a single word without spaces",
+      "copied": "Copied",
+      "textCopied": "Caption copied",
+      "hashtagsCopied": "Hashtags copied",
+      "allCopied": "Caption and hashtags copied",
+      "copyFailed": "Failed to copy",
+      "imageDeleted": "Image removed",
+      "shareSuccess": "Image shared/saved successfully",
+      "shareFailed": "Failed to share/save",
+      "downloadSuccess": "Image downloaded",
+      "downloadFailed": "Download failed",
+      "fileSizeTooLarge": "File size too large. Please compress the image.",
+      "timeout": "Processing timed out. Please try again or use a smaller image.",
+      "serverError": "Server error occurred. Please try again later.",
+      "processingError": "An error occurred during processing"
+    },
+    "footer": {
+      "copyright": "© 2025 Instagram Helper • ",
+      "poweredBy": "Powered by Gemini AI"
+    },
+    "languageSwitch": {
+      "label": "Language",
+      "ja": "日本語",
+      "en": "English"
+    }
+  }
+}
