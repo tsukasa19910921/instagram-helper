@@ -109,7 +109,7 @@ const i18n = new I18n();
 function createLanguageSwitcher() {
     const switcher = document.createElement('div');
     switcher.id = 'languageSwitcher';
-    switcher.className = 'fixed top-4 right-4 z-50 bg-white rounded-lg shadow-lg p-2 flex items-center space-x-2';
+    switcher.className = 'fixed bottom-4 right-4 z-50 bg-white rounded-full shadow-lg p-2 flex items-center space-x-2 border border-gray-200';
 
     // 言語ボタンを作成
     const jaButton = createLanguageButton('ja', '🇯🇵', '日本語');
@@ -127,9 +127,9 @@ function createLanguageSwitcher() {
 // 言語ボタンを作成
 function createLanguageButton(langCode, flag, label) {
     const button = document.createElement('button');
-    button.className = 'language-btn px-3 py-1 rounded-md transition-all duration-200 flex items-center space-x-1';
+    button.className = 'language-btn px-3 py-2 rounded-full transition-all duration-200 flex items-center space-x-1 hover:scale-105';
     button.dataset.lang = langCode;
-    button.innerHTML = `<span class="text-lg">${flag}</span><span class="text-sm font-medium">${label}</span>`;
+    button.innerHTML = `<span class="text-lg">${flag}</span><span class="text-sm font-medium hidden sm:inline">${label}</span>`;
 
     button.addEventListener('click', () => {
         i18n.setLanguage(langCode);
@@ -145,10 +145,10 @@ function updateLanguageButtons(activeLang) {
     const buttons = document.querySelectorAll('.language-btn');
     buttons.forEach(btn => {
         if (btn.dataset.lang === activeLang) {
-            btn.classList.add('bg-purple-600', 'text-white');
+            btn.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-pink-600', 'text-white', 'shadow-md');
             btn.classList.remove('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
         } else {
-            btn.classList.remove('bg-purple-600', 'text-white');
+            btn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600', 'text-white', 'shadow-md');
             btn.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
         }
     });
