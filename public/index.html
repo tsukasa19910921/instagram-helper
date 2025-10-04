@@ -14,12 +14,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instagram Helper - 投稿効率化アプリ</title>
-    <!-- Favicon設定（404エラー回避） -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📸</text></svg>">
+
+    <!-- Meta Description -->
+    <meta name="description" content="Instagram Helperは、AIが自動でキャプションとハッシュタグを生成するInstagram投稿支援ツール。画像を最適化し、SNSマーケティングや効率的なInstagram運用をサポートします。無料で利用可能。">
+
+    <!-- Meta Keywords -->
+    <meta name="keywords" content="Instagram, AI, SNS運用, 投稿自動化, ハッシュタグ生成, キャプション生成, 画像最適化, Instagramマーケティング, SNS支援ツール">
+
+    <!-- OGP / Open Graph Protocol -->
+    <meta property="og:title" content="Instagram Helper - AIでキャプションとハッシュタグを自動生成">
+    <meta property="og:description" content="AIがInstagram投稿文とハッシュタグを自動生成。画像を自動で最適化し、SNS運用を効率化する無料のInstagram支援Webアプリ。今すぐ使えます。">
+    <meta property="og:image" content="https://instagram-helper.vercel.app/assets/og-image.jpg">
+    <meta property="og:url" content="https://instagram-helper.vercel.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Instagram Helper">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Instagram Helper - AI投稿支援ツール">
+    <meta name="twitter:description" content="AIがInstagramの投稿を効率化。自動でキャプション・ハッシュタグ生成、画像も最適化。無料で試せます。">
+    <meta name="twitter:image" content="https://instagram-helper.vercel.app/assets/og-image.jpg">
+
+    <!-- 多言語SEO対策 (hreflang) -->
+    <link rel="alternate" hreflang="ja" href="https://instagram-helper.vercel.app/">
+    <link rel="alternate" hreflang="en" href="https://instagram-helper.vercel.app/">
+    <link rel="alternate" hreflang="x-default" href="https://instagram-helper.vercel.app/">
+
+    <!-- Favicon設定 -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- 構造化データ（JSON-LD） -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Instagram Helper",
+      "applicationCategory": "SocialMediaApplication",
+      "operatingSystem": "Web",
+      "description": "Instagram Helperは、AIがInstagramの投稿文とハッシュタグを自動生成する無料Webツールです。アップロードした画像を自動的に最適化し、マーケティングやSNS運用を効率化します。モバイル対応・多言語対応済み。",
+      "url": "https://instagram-helper.vercel.app/",
+      "author": {
+        "@type": "Person",
+        "name": "tsukasa19910921"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "JPY"
+      },
+      "featureList": [
+        "AI自動文章生成",
+        "ハッシュタグ自動生成",
+        "画像自動トリミング",
+        "Instagram最適化",
+        "無料利用",
+        "多言語対応"
+      ]
+    }
+    </script>
+
     <!-- i18n Script -->
     <script src="i18n.js"></script>
     <style>
@@ -104,19 +164,19 @@
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="text-lg font-semibold" data-i18n="upload.preview">プレビュー</h3>
                     <div class="space-x-2">
-                        <button id="changeImageButton" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                        <button id="changeImageButton" aria-label="画像を変更する" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">
                             <i class="fas fa-exchange-alt mr-1"></i><span data-i18n="upload.changeImage">画像を変更</span>
                         </button>
-                        <button id="removeImageButton" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                        <button id="removeImageButton" aria-label="画像を削除する" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors">
                             <i class="fas fa-times mr-1"></i><span data-i18n="upload.remove">削除</span>
                         </button>
                     </div>
                 </div>
                 <div class="flex justify-center">
                     <div class="relative inline-block">
-                        <img id="imagePreview" class="max-w-full max-h-96 rounded-lg shadow-md" alt="プレビュー">
+                        <img id="imagePreview" class="max-w-full max-h-96 rounded-lg shadow-md" alt="アップロードされた画像のプレビュー">
                         <!-- モバイル向けの×ボタン（画像上に表示） -->
-                        <button id="removeImageIconButton" class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg md:hidden transition-all hover:scale-110">
+                        <button id="removeImageIconButton" aria-label="画像を削除" class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg md:hidden transition-all hover:scale-110">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
@@ -234,7 +294,7 @@
 
         <!-- 処理ボタン -->
         <div class="text-center mb-6">
-            <button id="processButton" class="instagram-gradient text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+            <button id="processButton" aria-label="画像を加工して文章を生成する" class="instagram-gradient text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                 <i class="fas fa-magic mr-2"></i>
                 <span data-i18n="process.button">画像を加工して文章を生成</span>
             </button>
@@ -260,10 +320,10 @@
                     <span data-i18n="results.processedImage.title">加工済み画像</span>
                 </h2>
                 <div class="flex justify-center mb-4">
-                    <img id="processedImage" class="max-w-full rounded-lg shadow-md" alt="加工済み画像">
+                    <img id="processedImage" class="max-w-full rounded-lg shadow-md" alt="Instagram用に加工された1:1の正方形画像">
                 </div>
                 <div class="text-center">
-                    <button id="downloadImageButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                    <button id="downloadImageButton" aria-label="加工済み画像をダウンロード" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
                         <i class="fas fa-download mr-2"></i>
                         <span data-i18n="results.processedImage.download">画像をダウンロード</span>
                     </button>
@@ -280,7 +340,7 @@
                     <p id="generatedText" class="text-gray-800 whitespace-pre-wrap"></p>
                 </div>
                 <div class="text-center">
-                    <button id="copyTextButton" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                    <button id="copyTextButton" aria-label="生成された文章をクリップボードにコピー" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
                         <i class="fas fa-copy mr-2"></i>
                         <span data-i18n="results.generatedText.copy">文章をコピー</span>
                     </button>
@@ -297,7 +357,7 @@
                     <p id="hashtags" class="text-gray-800"></p>
                 </div>
                 <div class="text-center">
-                    <button id="copyHashtagsButton" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                    <button id="copyHashtagsButton" aria-label="生成されたハッシュタグをクリップボードにコピー" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
                         <i class="fas fa-copy mr-2"></i>
                         <span data-i18n="results.hashtags.copy">ハッシュタグをコピー</span>
                     </button>
@@ -307,7 +367,7 @@
             <!-- コピーボタンエリア -->
             <div class="bg-white rounded-lg shadow-md p-6">
                 <div class="text-center">
-                    <button id="copyAllButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-lg">
+                    <button id="copyAllButton" aria-label="文章とハッシュタグをすべてクリップボードにコピー" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-lg">
                         <i class="fas fa-clipboard-list mr-2"></i>
                         <span data-i18n="results.copyAll">すべてコピー（文章＋ハッシュタグ）</span>
                     </button>
@@ -316,7 +376,7 @@
 
             <!-- 新しい画像ボタン -->
             <div class="text-center mt-8">
-                <button id="newImageButton" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                <button id="newImageButton" aria-label="新しい画像を処理する" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
                     <i class="fas fa-redo mr-2"></i>
                     <span data-i18n="results.newImage">新しい画像を処理</span>
                 </button>
