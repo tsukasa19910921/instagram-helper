@@ -1,0 +1,11 @@
+# robots.txt for Instagram Helper
+
+# すべてのクローラーを許可
+User-agent: *
+Allow: /
+
+# サイトマップの場所を指定
+Sitemap: https://instagram-helper.vercel.app/sitemap.xml
+
+# クローリング頻度の調整（オプション）
+# Crawl-delay: 1
