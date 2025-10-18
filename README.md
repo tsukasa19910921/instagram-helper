@@ -137,6 +137,51 @@ npm run dev
    - `GEMINI_API_KEY`: Gemini APIキー
 4. デプロイボタンをクリック
 
+## 🔍 SEO設定（デプロイ後）
+
+デプロイが完了したら、以下の手順でGoogle Search Consoleを設定することをおすすめします。
+
+### Google Search Consoleへの登録
+
+1. **Google Search Consoleにアクセス**
+   - [Google Search Console](https://search.google.com/search-console)にアクセス
+   - Googleアカウントでログイン
+
+2. **プロパティを追加**
+   - 「プロパティを追加」をクリック
+   - URLプレフィックス方式を選択
+   - デプロイしたURL（例: `https://instagram-helper.vercel.app`）を入力
+
+3. **所有権の確認**
+   - HTMLタグ方式を選択
+   - 提供されたメタタグを`public/index.html`の`<head>`内に追加
+   - Vercelに再デプロイ
+   - 「確認」ボタンをクリック
+
+4. **サイトマップを送信**
+   - 左メニューから「サイトマップ」を選択
+   - `sitemap.xml` を入力して送信
+   - 数日以内にGoogleがサイトをクロール開始
+
+5. **インデックス登録をリクエスト**
+   - 「URL検査」ツールを使用
+   - トップページのURLを入力
+   - 「インデックス登録をリクエスト」をクリック
+
+### Twitter Card Validatorでの確認
+
+Twitterでリンクを共有する際に画像が正しく表示されるか確認します：
+
+1. [Twitter Card Validator](https://cards-dev.twitter.com/validator)にアクセス
+2. デプロイしたURLを入力
+3. プレビューを確認（og-image.jpgが表示されているか）
+
+### その他の確認ツール
+
+- **構造化データテスト**: [Rich Results Test](https://search.google.com/test/rich-results)
+- **OGP確認**: [OpenGraph.xyz](https://www.opengraph.xyz/)
+- **ページ速度**: [PageSpeed Insights](https://pagespeed.web.dev/)
+
 ## 📂 プロジェクト構成
 
 ```
