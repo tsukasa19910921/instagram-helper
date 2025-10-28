@@ -201,7 +201,30 @@ function validateRequiredKeyword(keyword) {
     return !hasSpace;  // 要素がない場合も検証結果を返す
 }
 
+// ========================================
+// ヘルパー関数: ファイルをBase64に変換
+// ========================================
+/**
+ * ファイルオブジェクトをBase64文字列に変換します
+ * @param {File} file - 変換するファイル
+ * @returns {Promise<string>} Base64文字列（data:プレフィックスなし）
+ */
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            // data:image/jpeg;base64, の部分を除去して純粋なBase64文字列のみ返す
+            const base64 = reader.result.split(',')[1];
+            resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+// ========================================
 // 処理ボタンクリック
+// ========================================
 processButton.addEventListener('click', async () => {
     if (!selectedFile) {
         showToast(window.i18n ? i18n.t('toast.selectImage') : '画像を選択してください', 'error');
@@ -222,28 +245,40 @@ processButton.addEventListener('click', async () => {
     loadingSection.classList.remove('hidden');
     resultSection.classList.add('hidden');
 
-    // FormDataの作成
-    const formData = new FormData();
-    formData.append('image', selectedFile);
-    formData.append('textStyle', textStyle.value);
-    formData.append('hashtagAmount', hashtagAmount.value);
-    formData.append('language', document.getElementById('language').value);
-    formData.append('characterStyle', document.getElementById('characterStyle').value);
-    formData.append('imageStyle', document.getElementById('imageStyle').value);
-    if (requiredKeyword) {
-        formData.append('requiredKeyword', requiredKeyword);
-    }
-
     try {
-        // サーバーに送信
-        // Vercel環境とローカル環境の両方に対応
-        const apiEndpoint = window.location.hostname === 'localhost'
-            ? '/api/process'
-            : '/api/process';
+        // ========================================
+        // 画像をBase64に変換
+        // ========================================
+        console.log('画像をBase64に変換中...');
+        const base64Image = await fileToBase64(selectedFile);
+        console.log('Base64変換完了:', base64Image.length, '文字');
 
-        const response = await fetch(apiEndpoint, {
+        // ========================================
+        // JSON形式で送信
+        // ========================================
+        const requestBody = {
+            imageBase64: base64Image,
+            textStyle: textStyle.value,
+            hashtagAmount: hashtagAmount.value,
+            language: document.getElementById('language').value,
+            characterStyle: document.getElementById('characterStyle').value,
+            imageStyle: document.getElementById('imageStyle').value,
+            requiredKeyword: requiredKeyword || ''
+        };
+
+        console.log('APIリクエスト送信中...', {
+            textStyle: requestBody.textStyle,
+            hashtagAmount: requestBody.hashtagAmount,
+            language: requestBody.language,
+            imageBase64Length: requestBody.imageBase64.length
+        });
+
+        const response = await fetch('/api/process', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
         });
 
         // エラーハンドリングの改善
@@ -274,6 +309,7 @@ processButton.addEventListener('click', async () => {
         }
 
         const data = await response.json();
+        console.log('API応答受信:', data);
 
         // 結果の表示
         displayResults(data);
