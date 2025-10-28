@@ -42,8 +42,9 @@ Instagram投稿を効率化するAI搭載Webアプリケーション。画像を
 - Canvas API（画像圧縮）
 
 ### バックエンド
-- Node.js + Express
+- Node.js（バニラJS）
 - Vercel Functions（サーバーレス）
+- Vercel CLI（ローカル開発環境）
 - Sharp（画像処理）
 - Multer（ファイルアップロード）
 
@@ -86,16 +87,21 @@ MAX_FILE_SIZE=10485760
 ### 4. 起動
 
 ```bash
-# 本番モード
-npm start
-
-# 開発モード（nodemonが必要）
+# 開発モード（推奨）
 npm run dev
+
+# または本番モード
+npm start
 ```
 
 ### 5. アクセス
 
 ブラウザで http://localhost:3000 を開く
+
+**注意**:
+- ローカル開発: Express.js サーバー（`server.js`）を使用
+- Vercelデプロイ: Vercel Functions（`api/process.js`）を使用
+- どちらも同じ処理ロジック（`lib/`フォルダ）を共有
 
 ## 📝 使い方
 
@@ -186,23 +192,21 @@ Twitterでリンクを共有する際に画像が正しく表示されるか確�
 
 ```
 instagram-helper/
-├── src/
-│   └── shared/
-│       ├── processor.js    # 画像処理・AI生成の統合ロジック
-│       └── upload.js       # Multer設定（メモリストレージ）
+├── lib/
+│   ├── processor.js      # 画像処理・AI生成の統合ロジック
+│   └── upload.js         # Multer設定（メモリストレージ）
 ├── api/
-│   └── process.js         # Vercel Functions エンドポイント
+│   └── process.js        # Vercel Functions エンドポイント
 ├── public/
-│   ├── index.html         # メインアプリケーション
+│   ├── index.html        # メインアプリケーション
 │   ├── app.js            # フロントエンドロジック
 │   ├── i18n.js           # 多言語化システム
-│   └── translations.json # 翻訳データ（日本語/英語）
+│   └── assets/           # 画像・アセット
 ├── server.js             # ローカル開発サーバー
-├── index.html            # GitHub Pages用ランディングページ
 ├── vercel.json           # Vercel設定
 ├── package.json          # 依存関係
 ├── CLAUDE.md             # Claude Code用ガイド
-└── README.md            # このファイル
+└── README.md             # このファイル
 ```
 
 ## ⚙️ 設定オプション

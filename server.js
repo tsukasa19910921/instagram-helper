@@ -4,8 +4,8 @@ const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
 
-const { upload } = require('./src/shared/upload');
-const { unifiedProcessHandler } = require('./src/shared/processor');
+const { upload } = require('./lib/upload');
+const { unifiedProcessHandler } = require('./lib/processor');
 
 const app = express();
 const PORT = process.env.PORT || 3000;

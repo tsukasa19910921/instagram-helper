@@ -1,6 +1,6 @@
 // api/process.js
-const { upload } = require('../src/shared/upload');
-const { unifiedProcessHandler } = require('../src/shared/processor');
+const { upload } = require('../lib/upload');
+const { unifiedProcessHandler } = require('../lib/processor');
 
 module.exports = (req, res) => {
   upload(req, res, (err) => {
