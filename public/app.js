@@ -7,7 +7,7 @@ const processButton = document.getElementById('processButton');
 const loadingSection = document.getElementById('loadingSection');
 const resultSection = document.getElementById('resultSection');
 const textStyle = document.getElementById('textStyle');
-const hashtagAmount = document.getElementById('hashtagAmount');
+const hashtagCount = document.getElementById('hashtagCount');
 const processedImage = document.getElementById('processedImage');
 const generatedText = document.getElementById('generatedText');
 const hashtags = document.getElementById('hashtags');
@@ -259,7 +259,7 @@ processButton.addEventListener('click', async () => {
         const requestBody = {
             imageBase64: base64Image,
             textStyle: textStyle.value,
-            hashtagAmount: hashtagAmount.value,
+            hashtagCount: parseInt(hashtagCount.value) || 10,
             language: document.getElementById('language').value,
             characterStyle: document.getElementById('characterStyle').value,
             imageStyle: document.getElementById('imageStyle').value,
@@ -268,7 +268,7 @@ processButton.addEventListener('click', async () => {
 
         console.log('APIリクエスト送信中...', {
             textStyle: requestBody.textStyle,
-            hashtagAmount: requestBody.hashtagAmount,
+            hashtagCount: requestBody.hashtagCount,
             language: requestBody.language,
             imageBase64Length: requestBody.imageBase64.length
         });
