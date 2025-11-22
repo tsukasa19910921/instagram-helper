@@ -48,7 +48,7 @@ app.post('/api/process', async (req, res) => {
       // ========================================
       // JSON形式の処理（React Nativeアプリ用）
       // ========================================
-      const { imageBase64, textStyle, hashtagAmount, language, characterStyle, imageStyle, requiredKeyword } = req.body;
+      const { imageBase64, textStyle, hashtagCount, language, characterStyle, imageStyle, requiredKeyword } = req.body;
 
       if (!imageBase64) {
         return res.status(400).json({ error: '画像データがありません' });
@@ -62,7 +62,7 @@ app.post('/api/process', async (req, res) => {
 
       // Base64をBufferに変換
       imageBuffer = Buffer.from(imageBase64, 'base64');
-      params = { textStyle, hashtagAmount, language, characterStyle, imageStyle, requiredKeyword };
+      params = { textStyle, hashtagCount, language, characterStyle, imageStyle, requiredKeyword };
 
       console.log('JSON形式のリクエストを受信しました');
 
