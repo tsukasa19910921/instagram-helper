@@ -256,10 +256,11 @@ processButton.addEventListener('click', async () => {
         // ========================================
         // JSON形式で送信
         // ========================================
+        const hashtagCountValue = parseInt(hashtagCount.value);
         const requestBody = {
             imageBase64: base64Image,
             textStyle: textStyle.value,
-            hashtagCount: parseInt(hashtagCount.value) || 10,
+            hashtagCount: isNaN(hashtagCountValue) ? 3 : hashtagCountValue,
             language: document.getElementById('language').value,
             characterStyle: document.getElementById('characterStyle').value,
             imageStyle: document.getElementById('imageStyle').value,
@@ -348,8 +349,8 @@ function displayResults(data) {
     // 文章の表示
     generatedText.textContent = data.generatedText || '素敵な写真が撮れました！✨';
 
-    // ハッシュタグの表示
-    hashtags.textContent = data.hashtags || '#instagram #photo #instagood';
+    // ハッシュタグの表示（空文字列も有効な値として扱う）
+    hashtags.textContent = data.hashtags !== undefined && data.hashtags !== null ? data.hashtags : '#instagram #photo #instagood';
 
     // UI状態の更新
     loadingSection.classList.add('hidden');

@@ -52,6 +52,10 @@
           "few": "少ない (3〜5個)"
         }
       },
+      "hashtagCount": {
+        "label": "ハッシュタグの数",
+        "description": "ハッシュタグの数を指定（0〜30個）"
+      },
       "language": {
         "label": "言語設定",
         "description": "投稿文の言語を選択",
@@ -180,6 +184,10 @@
           "normal": "Normal (8-10)",
           "few": "Few (3-5)"
         }
+      },
+      "hashtagCount": {
+        "label": "Hashtag Count",
+        "description": "Specify hashtag count (0-30)"
       },
       "language": {
         "label": "Language Setting",
